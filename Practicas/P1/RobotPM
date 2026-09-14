@@ -1,1 +1,55 @@
+import threading
+import time
 
+class Robot(threading.Thread):
+    def __init__(self, id, name, color, start_pos, target_pos):
+        super().__init__()
+        self.id = id
+        self.name = name
+        self.color = color
+        self.start_pos = list(start_pos)  # Pasamos la tupla a lista para poder modificarla después
+        self.target_pos = list(target_pos) # Pasamos la tupla a lista para que no falle la comparación en el while
+
+    def run(self):
+         
+         print(f"{self.name} ({self.color}) Inicia posicion en {self.start_pos} con objetivo {self.target_pos}")
+         return self.ir_a_objetivo()  # Llama a la función ir_a_objetivo que ejecutará el movimiento
+
+    def ir_a_objetivo(self):
+
+        while self.start_pos != self.target_pos:    # Mientras las coordenadas iniciales y las finales sean diferentes: 
+
+            dx = (self.target_pos[0] > self.start_pos[0]) - (self.target_pos[0] < self.start_pos[0])
+            dy = (self.target_pos[1] > self.start_pos[1]) - (self.target_pos[1] < self.start_pos[1])
+
+            match (dx, dy):
+                break    # Ha llegado al punto.
+            case (step_x, step_y):
+                self.start_pos[0] += step_x
+                self.start_pos[1] += step_y
+                  
+            print(f"{self.name} ({self.color}) Nueva posicion {self.start_pos}")  # Avisa que ha llegado
+            time.sleep(2)  # Dejamos un tiempo para ver el movimiento despacio.
+
+        print(f"{self.name} ({self.color}) Ha llegado a su objetivo {self.target_pos}") 
+
+     
+# Crear y lanzar robots
+
+Robot1 = Robot(1, "Robot1", "Rojo", (0, 0), (5, 5))
+Robot2 = Robot(2, "Robot2", "Verde", (10, 0), (3, 7))
+Robot3 = Robot(3, "Robot3", "Azul", (0, 5), (8, 2))
+
+# Iniciar los threads de los robots
+
+Robot1.start()
+Robot2.start()
+Robot3.start()
+
+#Esperar a que todos los robots terminen
+
+Robot1.join()
+Robot2.join()
+Robot3.join()
+
+print("Todos los robots han llegado a sus posiciones objetivo")
